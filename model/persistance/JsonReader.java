@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -17,7 +16,6 @@ import model.StudyTracker;
 public class JsonReader {
 
     private String source;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public JsonReader(String source) {
         this.source = source;
@@ -64,8 +62,8 @@ public class JsonReader {
         session.resume(); // to reset endTime if needed
 
         // Overwrite start and end times
-        session.setStartTime(LocalDateTime.parse(start, formatter));
-        session.setEndTime(LocalDateTime.parse(end, formatter));
+        session.setStartTime(LocalDateTime.parse(start));
+        session.setEndTime(LocalDateTime.parse(end));
 
         // set paused status if needed
         if (paused) {

@@ -1,7 +1,6 @@
 package model;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.json.JSONObject;
 
@@ -14,7 +13,6 @@ public class StudySession {
     private int duration;
     private LocalDateTime pauseStart;
     private boolean paused;
-    private DateTimeFormatter formatter;
 
 
     //REQUIRES: duration >= 0
@@ -24,7 +22,6 @@ public class StudySession {
         this.duration = duration;
         startTime = LocalDateTime.now();
         endTime = startTime.plusMinutes(duration);
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     }
 
@@ -81,8 +78,8 @@ public class StudySession {
     //EFFECTS: changes the format to a nice string
     @Override
     public String toString() {
-        return "Course: " + course + ", Start: " + startTime.format(formatter) +
-               ", End: " + endTime.format(formatter) + ", Duration (min): " + duration;
+        return "Course: " + course + ", Start: " + startTime +
+               ", End: " + endTime + ", Duration (min): " + duration;
     }
 
     public JSONObject toJson() {

@@ -1,4 +1,7 @@
 package ui;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
@@ -6,6 +9,8 @@ import java.util.Scanner;
 import Exception.InvalidMinutesException;
 import model.StudySession;
 import model.StudyTracker;
+import model.persistance.JsonReader;
+import model.persistance.JsonWriter;
 
 public class Main {
 
@@ -13,12 +18,22 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         StudyTracker tracker = new StudyTracker();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        JsonReader reader = new JsonReader("./data/studyTracker.json"); // <-- here
+
+        try {
+            tracker = reader.read(); // try to load existing sessions
+            System.out.println("Sessions loaded from file.");
+        } catch (IOException e) {
+            tracker = new StudyTracker(); // start fresh if file not found
+            System.out.println("No existing data found, starting a new tracker.");
+        }
         
 
         boolean running = true;
         while (running) {
 
-            System.out.println("\nEnter command(create, pause, resume, extend, status, total, exit)");
+            System.out.println("\nEnter command(create, delete, pause, resume, extend, status, total, save, exit)");
             String command = scanner.nextLine();
 
             switch (command) {
@@ -125,6 +140,45 @@ public class Main {
                 case "total": 
                     System.out.println("Total time spent for sessions is: ");
                     System.out.println(tracker.totalStudy());
+                    break;
+
+                case "save":
+                    try {
+                        File file = new File("./data/StudyTracker.json");
+                        file.getParentFile().mkdirs(); // <-- creates ./data folder if it doesn't exist
+
+                        JsonWriter writer = new JsonWriter(file.getPath());
+                        writer.open();
+                        writer.write(tracker);
+                        writer.close();
+                        System.out.println("Sessions saved successfully.");
+                    } catch (FileNotFoundException e) {
+                        System.out.println("Unable to save sessions");
+                    }
+                    break;
+
+                case "delete":
+                    List<StudySession> allSessions = tracker.listSessions();
+                    if (allSessions.isEmpty()) {
+                        System.out.println("No sessions to delete.");
+                        break;
+                    }
+
+                    for (int i = 0; i < allSessions.size(); i++) {
+                        System.out.println((i+1) + ") " + allSessions.get(i));
+                    }
+
+                    System.out.println("Choose the number of the session to delete: ");
+                    int delChoice = scanner.nextInt();
+                    scanner.nextLine();
+                    if (delChoice < 1 || delChoice > allSessions.size()) {
+                        System.out.println("Invalid input, try again");
+                        break;
+                    }
+
+                    StudySession removed = allSessions.get(delChoice - 1);
+                    tracker.removeSession(removed);
+                    System.out.println("Session deleted: " + removed);
                     break;
 
                 default:
