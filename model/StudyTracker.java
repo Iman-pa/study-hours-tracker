@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 //class that keeps all the sessions and lists them 
 public class StudyTracker {
     private List<StudySession> sessions;
@@ -45,6 +48,18 @@ public class StudyTracker {
             totalTime += s.getDuration();
         }
         return totalTime;
+    }
+
+    public JSONObject toJson() {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject json = new JSONObject();
+
+        for (StudySession s : sessions) {
+            jsonArray.put(s.toJson());
+        }
+
+        json.put("sessions", jsonArray);
+        return json;
     }
 
 

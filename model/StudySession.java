@@ -3,6 +3,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import org.json.JSONObject;
+
 import Exception.InvalidMinutesException;
 
 public class StudySession {
@@ -81,6 +83,25 @@ public class StudySession {
     public String toString() {
         return "Course: " + course + ", Start: " + startTime.format(formatter) +
                ", End: " + endTime.format(formatter) + ", Duration (min): " + duration;
+    }
+
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("course", course);
+        json.put("startTime", startTime.toString());
+        json.put("endTime", endTime.toString());
+        json.put("duration", duration);
+        json.put("paused", paused);
+
+        return json;
+    }
+
+    public void setStartTime(LocalDateTime start) {
+        this.startTime = start;
+    }
+
+    public void setEndTime(LocalDateTime end) {
+        this.endTime = end;
     }
 
 }
