@@ -15,6 +15,8 @@ public class StudySession {
     private DateTimeFormatter formatter;
 
 
+    //REQUIRES: duration >= 0
+    //EFFECTS: sets the course, duration, start time and calculates the end time.
     public StudySession(String course, int duration) {
         this.course = course;
         this.duration = duration;
@@ -40,6 +42,7 @@ public class StudySession {
         return duration;
     }
 
+    //EFFECTS: if it's not paused, then it pauses the session
     public void pause() {
         if (!paused) {
             pauseStart = LocalDateTime.now();
@@ -47,6 +50,7 @@ public class StudySession {
         }
     }
 
+    //EFFECTS: if it's paused, then it resumes the session
     public void resume() {
         if (paused) {
             long pausedDuration = Duration.between(pauseStart, LocalDateTime.now()).toSeconds();
@@ -55,6 +59,7 @@ public class StudySession {
         }
     }
 
+    //EFFECTS: if minutes less than 0 throws InvalidMinutesException, otherwise extends the end time by minutes and adds the minutes to duration
     public void extend(int minutes) throws InvalidMinutesException {
         if (minutes < 0) {
             throw new InvalidMinutesException();
@@ -63,6 +68,7 @@ public class StudySession {
         duration += minutes;
     }
 
+    //EFFECTS: returns true if the end time is passed and false otherwise
     public boolean done() {
         if (LocalDateTime.now().isAfter(endTime)) {
             return true;
@@ -70,6 +76,7 @@ public class StudySession {
         return false;
     }
 
+    //EFFECTS: changes the format to a nice string
     @Override
     public String toString() {
         return "Course: " + course + ", Start: " + startTime.format(formatter) +
